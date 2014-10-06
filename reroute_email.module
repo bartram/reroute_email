@@ -83,15 +83,16 @@ function reroute_email_mail_alter(&$message) {
     if (isset($message['to'])) {
       $to = $message['to'];
       // Split the address into the local part and the domain part
-      list($local, $domain) = explode('@', $to, 2);
-      // Strip the tag
-      list($local) = explode('+', $local, 2);
-      $to = "{$local}@{$domain}";
+      if (valid_email_address($to)) {
+        list($local, $domain) = explode('@', $to, 2);
+        // Strip the tag
+        list($local) = explode('+', $local, 2);
+        $to = "{$local}@{$domain}";
+      }
     }
     else {
       $to = t('[to] is missing');
     }
-    drupal_set_message($to);
 
     $message['headers']['X-Rerouted-Mail-Key'] = $mailkey;
     $message['headers']['X-Rerouted-Website'] = $base_url;
